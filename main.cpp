@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
 
     ANN ann;
-    AnnTrainer t(&ann);
+    AnnTrainer t(ann);
     int iters = 10000;
 
     if (argc > 1)

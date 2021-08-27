@@ -8,7 +8,7 @@
 class AnnTrainer
 {
 public:
-    AnnTrainer(ANN *ann);
+    AnnTrainer(ANN &ann);
     void train(unsigned int iterations);
 
 private:
@@ -17,7 +17,7 @@ private:
 
     std::uniform_int_distribution<int> unif;
     std::default_random_engine re;
-    ANN *ann;
+    ANN ann;
 };
 
 #endif // ANNTRAINER_H

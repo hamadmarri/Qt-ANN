@@ -4,30 +4,24 @@ Layer::Layer(int nodesNum)
 {
     /* +1 is for bias neuron */
     this->nodesNum = nodesNum + 1;
-    this->nodes = new Node*[this->nodesNum];
+    this->nodes = std::shared_ptr<std::shared_ptr<Node>[]>
+            (new std::shared_ptr<Node>[this->nodesNum]);
+//            ,          std::default_delete<Node*[]>());
 }
 
-Layer::~Layer()
+void Layer::connectLayers(std::shared_ptr<Layer> left, std::shared_ptr<Layer> right)
 {
-    for (int i = 0; i < this->nodesNum; ++i)
-        delete this->nodes[i];
-
-    delete [] this->nodes;
-}
-
-void Layer::connectLayers(Layer *left, Layer *right)
-{
-    Node *lN;
+    std::shared_ptr<Node> lN;
     Edge *lE;
 
     /* initialize nodes */
     for (int i = 0; i < this->nodesNum; ++i) {
         if (!left) {
-            this->nodes[i] = new Node(0);
+            this->nodes[i] = std::make_shared<Node>(0);
             continue;
         }
 
-        this->nodes[i] = new Node(left->nodesNum);
+        this->nodes[i] = std::make_shared<Node>(left->nodesNum);
         for (int j = 0; j < left->nodesNum; ++j) {
             lN = left->nodes[j];
             lE = &this->nodes[i]->leftEdges[j];
@@ -51,9 +45,9 @@ void Layer::feedForward()
 
 void Layer::backPropagate()
 {
-    Node *n, *rN;
+    std::shared_ptr<Node> n, rN;
     Edge *rE;
-    Layer *rL = this->rightLayer;
+    std::shared_ptr<Layer> rL = this->rightLayer;
     double sum = 0;
 
     /* Calculate all output error, update threshold, and update weights */
@@ -81,7 +75,7 @@ void Layer::backPropagate()
 
 void Layer::backPropagate(std::vector<double> &expectedOutputs)
 {
-    Node *n;
+    std::shared_ptr<Node> n;
 
     /* Calculate all output error, update threshold,
      * and update weights

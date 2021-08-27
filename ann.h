@@ -2,13 +2,13 @@
 #define ANN_H
 
 #include <vector>
+#include <memory>
 #include "layer.h"
 
 class ANN
 {
 public:
     ANN();
-    ~ANN();
 
     void setInputValues(std::vector<double> values);
     void feedForward();
@@ -19,8 +19,8 @@ private:
 
     void initializeLayers();
 
-    Layer **layers;
-    Layer *outputLayer;
+    std::vector<std::shared_ptr<Layer>> layers;
+    std::shared_ptr<Layer> outputLayer;
 };
 
 #endif // ANN_H

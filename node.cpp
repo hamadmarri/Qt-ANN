@@ -25,18 +25,12 @@ Node::Node(int leftLayerNum)
      * Initialise weight with a random
      * number between -1 and 1
      */
-    this->leftEdges = new Edge[leftLayerNum];
+    this->leftEdges = std::shared_ptr<Edge[]> (new Edge[leftLayerNum]);
 
     for (int i = 0; i < this->leftLayerNum; ++i) {
         this->leftEdges[i].weight = -1 + (2 * unif(re));
         this->leftEdges[i].deltaWeight = 0.0;
     }
-}
-
-Node::~Node()
-{
-    if (this->leftLayerNum)
-        delete [] this->leftEdges;
 }
 
 void Node::feedForward()

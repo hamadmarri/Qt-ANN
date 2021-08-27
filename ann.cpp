@@ -10,10 +10,8 @@ ANN::ANN()
 
 void ANN::initializeLayers()
 {
-    this->layers = new Layer*[LAYERS_NUM];
-
     for (int i = 0; i < LAYERS_NUM; ++i)
-        this->layers[i] = new Layer(LAYERS_NODES[i]);
+        this->layers.push_back(std::make_shared<Layer>(LAYERS_NODES[i]));
 
     this->outputLayer = this->layers[LAYERS_NUM - 1];
 
@@ -26,18 +24,10 @@ void ANN::initializeLayers()
     this->outputLayer->connectLayers(this->layers[LAYERS_NUM - 2], nullptr);
 }
 
-ANN::~ANN()
-{
-    for (int i = 0; i < LAYERS_NUM; ++i)
-        delete this->layers[i];
-
-    delete [] this->layers;
-}
-
 void ANN::setInputValues(std::vector<double> values)
 {
-    Layer *iL = this->layers[0];
-    Node **nodes = iL->nodes;
+    std::shared_ptr<Layer> iL = this->layers[0];
+    std::shared_ptr<std::shared_ptr<Node>[]> nodes = iL->nodes;
 
     for (int i = 0; i < values.size(); i++)
         nodes[i]->output = values[i];
