@@ -1,13 +1,13 @@
 #ifndef NODE_H
 #define NODE_H
 
-#include <memory>
+#include <vector>
 #include "defines.h"
 
 class Node;
 
 struct Edge {
-    std::shared_ptr<Node> leftNode;
+    Node *leftNode;
     double weight;
     double deltaWeight;
 };
@@ -27,7 +27,7 @@ public:
     double error;
     double deltaThreshold = 0;
 
-    std::shared_ptr<Edge[]> leftEdges;
+    std::vector<Edge> leftEdges;
 private:
     static double sigmoid(double net);
 };

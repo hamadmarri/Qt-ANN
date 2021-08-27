@@ -13,24 +13,23 @@ void ANN::initializeLayers()
     for (int i = 0; i < LAYERS_NUM; ++i)
         this->layers.push_back(std::make_shared<Layer>(LAYERS_NODES[i]));
 
-    this->outputLayer = this->layers[LAYERS_NUM - 1];
+    this->outputLayer = this->layers[LAYERS_NUM - 1].get();
 
     /* connect layers */
-    this->layers[0]->connectLayers(nullptr, this->layers[1]);
+    this->layers[0]->connectLayers(nullptr, this->layers[1].get());
 
     for (int i = 1; i < LAYERS_NUM - 1; ++i)
-        this->layers[i]->connectLayers(this->layers[i - 1], this->layers[i + 1]);
+        this->layers[i]->connectLayers(this->layers[i - 1].get(), this->layers[i + 1].get());
 
-    this->outputLayer->connectLayers(this->layers[LAYERS_NUM - 2], nullptr);
+    this->outputLayer->connectLayers(this->layers[LAYERS_NUM - 2].get(), nullptr);
 }
 
 void ANN::setInputValues(std::vector<double> values)
 {
-    std::shared_ptr<Layer> iL = this->layers[0];
-    std::shared_ptr<std::shared_ptr<Node>[]> nodes = iL->nodes;
+    Layer *iL = this->layers[0].get();
 
     for (int i = 0; i < values.size(); i++)
-        nodes[i]->output = values[i];
+        iL->nodes[i]->output = values[i];
 }
 
 void ANN::feedForward()

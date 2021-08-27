@@ -4,26 +4,24 @@ Layer::Layer(int nodesNum)
 {
     /* +1 is for bias neuron */
     this->nodesNum = nodesNum + 1;
-    this->nodes = std::shared_ptr<std::shared_ptr<Node>[]>
-            (new std::shared_ptr<Node>[this->nodesNum]);
-//            ,          std::default_delete<Node*[]>());
+    this->nodes = std::vector<std::shared_ptr<Node>> (this->nodesNum);
 }
 
-void Layer::connectLayers(std::shared_ptr<Layer> left, std::shared_ptr<Layer> right)
+void Layer::connectLayers(Layer *left, Layer *right)
 {
-    std::shared_ptr<Node> lN;
+    Node *lN;
     Edge *lE;
 
     /* initialize nodes */
     for (int i = 0; i < this->nodesNum; ++i) {
         if (!left) {
-            this->nodes[i] = std::make_shared<Node>(0);
+            this->nodes[i] = std::unique_ptr<Node>(new Node(0));
             continue;
         }
 
-        this->nodes[i] = std::make_shared<Node>(left->nodesNum);
+        this->nodes[i] = std::unique_ptr<Node>(new Node(left->nodesNum));
         for (int j = 0; j < left->nodesNum; ++j) {
-            lN = left->nodes[j];
+            lN = left->nodes[j].get();
             lE = &this->nodes[i]->leftEdges[j];
 
             lE->leftNode = lN;
@@ -45,18 +43,18 @@ void Layer::feedForward()
 
 void Layer::backPropagate()
 {
-    std::shared_ptr<Node> n, rN;
+    Node *n, *rN;
     Edge *rE;
-    std::shared_ptr<Layer> rL = this->rightLayer;
+    Layer *rL = this->rightLayer;
     double sum = 0;
 
     /* Calculate all output error, update threshold, and update weights */
     for (int i = 0; i < this->nodesNum; ++i) {
-        n = this->nodes[i];
+        n = this->nodes[i].get();
         sum = 0;
 
         for (int j = 0; j < rL->nodesNum; ++j) {
-            rN = rL->nodes[j];
+            rN = rL->nodes[j].get();
             rE = &rN->leftEdges[i];
 
             sum += rE->weight * rN->error;
@@ -75,13 +73,13 @@ void Layer::backPropagate()
 
 void Layer::backPropagate(std::vector<double> &expectedOutputs)
 {
-    std::shared_ptr<Node> n;
+    Node *n;
 
     /* Calculate all output error, update threshold,
      * and update weights
      */
     for (int i = 0; i < this->nodesNum; ++i) {
-        n = this->nodes[i];
+        n = this->nodes[i].get();
 
         // update error
         n->error = Layer::derivativeOfSigmoid(expectedOutputs[i], n->output);
