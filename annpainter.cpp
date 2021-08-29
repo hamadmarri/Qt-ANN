@@ -26,8 +26,8 @@ void AnnPainter::paint(QPainter *painter)
     for (int i = 1; i < this->_error.size(); ++i) {
         double pe = this->_error[i - 1];
         double e = this->_error[i];
-        int px = (i - 1) * 2;
-        int x = i * 2;
+        int px = (i - 1) * 6;
+        int x = i * 6;
 
         pe = 1 - pe;
         pe *= 400;
