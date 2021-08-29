@@ -33,6 +33,7 @@ set(PROJECT_SOURCES
         layer.cpp
         ann.cpp
         anntrainer.cpp
+        annpainter.cpp
         qml.qrc
 )
 

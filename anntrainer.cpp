@@ -2,18 +2,38 @@
 #include <random>
 #include <ctime>
 
-AnnTrainer::AnnTrainer(ANN &ann)
+AnnTrainer::AnnTrainer()
 {
-    this->ann = ann;
     this->unif = std::uniform_int_distribution<int>(0, 1);
     re.seed(std::time(NULL));
 }
 
-void AnnTrainer::train(unsigned int iterations)
+AnnTrainer::AnnTrainer(ANN &ann) : AnnTrainer()
+{
+    this->ann = ann;
+}
+
+void AnnTrainer::train()
+{
+    this->timer = new QTimer(this);
+
+    connect(timer, &QTimer::timeout, this, &AnnTrainer::timeout);
+    timer->start(1);
+
+    this->start();
+}
+
+void AnnTrainer::run()
+{
+    this->_train();
+}
+
+void AnnTrainer::_train()
 {
     double a, b, c;
+    qDebug("start training");
 
-    for (unsigned int i = 0; i < iterations; ++i) {
+    for (unsigned int i = 0; i < this->_iterations; ++i) {
         this->generate(a, b, c);
 
         this->ann.setInputValues(std::vector<double>{a, b});
@@ -21,7 +41,29 @@ void AnnTrainer::train(unsigned int iterations)
         this->ann.backPropagate(std::vector<double>{c, 1.0});
     }
 
+    this->timer->stop();
     this->print();
+    emit errorChanged();
+}
+
+void AnnTrainer::timeout()
+{
+    emit errorChanged();
+}
+
+unsigned int AnnTrainer::iterations()
+{
+    return this->_iterations;
+}
+
+void AnnTrainer::setIterations(unsigned int i)
+{
+    this->_iterations = i;
+}
+
+double AnnTrainer::error()
+{
+    return this->ann.error;
 }
 
 void AnnTrainer::generate(double &a, double &b, double &c)
@@ -55,3 +97,4 @@ void AnnTrainer::print()
     this->ann.feedForward();
     this->ann.print();
 }
+

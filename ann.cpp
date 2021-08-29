@@ -47,6 +47,9 @@ void ANN::backPropagate(std::vector<double> expectedOutputs)
     // (back propagate the errors)
     for (int i = LAYERS_NUM - 2; i > 0 ; --i)
         this->layers[i]->backPropagate();
+
+    /* update error */
+    this->error = abs(this->outputLayer->nodes[0]->output - expectedOutputs[0]);
 }
 
 void ANN::print()

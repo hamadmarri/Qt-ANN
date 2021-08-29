@@ -15,6 +15,7 @@ public:
     void backPropagate(std::vector<double> expectedOutputs);
     void print();
 
+    double error;
 private:
 
     void initializeLayers();
